@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Programas DLB</title>
+<meta name="description" content="Baixe os programas DLB: DLB (gestão), DLB Criativo (quadros e storyboard) e DLB Sistema (monitor do PC). A Central DLB instala tudo e faz o backup.">
+<meta property="og:title" content="Programas DLB">
+<meta property="og:description" content="Central DLB: instala o DLB, o DLB Criativo e o DLB Sistema e guarda o backup no Google Drive e no pendrive.">
+<meta property="og:image" content="icone.png">
+<meta name="theme-color" content="#171719">
+<link rel="icon" href="icone.png">
+<style>
+:root{
+  --bg:#171719; --bg2:#1d1d20; --card:#222226; --bd:#33333a; --tx:#ecebe7; --mut:#9a9aa0;
+  --la:#f97a1f; --az:#3b8beb; --cr:#ecebe7; --ok:#3ecf9a;
+  --r:18px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.55 "Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+header{padding:22px 0}
+header .wrap{display:flex;align-items:center;gap:12px}
+header img{width:38px;height:38px}
+header b{font-size:18px;letter-spacing:.2px}
+header nav{margin-left:auto;display:flex;gap:18px;font-size:14px}
+header nav a{color:var(--mut);text-decoration:none}
+header nav a:hover{color:var(--tx)}
+
+.hero{padding:48px 0 40px;display:grid;grid-template-columns:1.2fr .8fr;gap:40px;align-items:center}
+.hero h1{font-size:clamp(34px,5.4vw,58px);line-height:1.05;margin:0 0 16px;letter-spacing:-1px}
+.hero h1 em{font-style:normal;color:var(--la)}
+.hero p{color:var(--mut);font-size:18px;margin:0 0 26px;max-width:540px}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:14px 22px;border-radius:12px;font-weight:700;text-decoration:none;border:0;cursor:pointer;font-size:16px;transition:transform .12s,filter .12s}
+.btn:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.btn.pri{background:var(--la);color:#171719}
+.btn.sec{background:#2c2c32;color:var(--tx)}
+.btn.peq{padding:10px 16px;font-size:14.5px}
+.btn svg{width:20px;height:20px;flex:none}
+.nota{font-size:13.5px;color:var(--mut);margin-top:12px}
+.ver{font-size:13px;color:var(--mut)}
+.ver b{color:var(--tx);font-weight:600}
+
+.mock{background:var(--card);border-radius:22px;padding:22px;border:1px solid var(--bd);box-shadow:0 30px 80px #0008}
+.mock .t{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.mock .t img{width:30px}
+.mock .t b{font-size:15px}
+.mock .row{display:flex;align-items:center;gap:12px;background:var(--bg2);border-radius:12px;padding:12px 14px;margin-bottom:10px;border-left:4px solid var(--c)}
+.mock .row span{flex:1;font-weight:600;font-size:14.5px}
+.mock .row i{font-style:normal;font-size:12px;color:var(--ok);font-weight:700}
+.mock .bk{display:flex;gap:8px;margin-top:14px;font-size:12.5px;color:var(--mut)}
+.mock .bk div{flex:1;background:var(--bg2);border-radius:10px;padding:10px;text-align:center}
+.mock .bk b{display:block;color:var(--tx);font-size:13px}
+
+section{padding:44px 0}
+h2{font-size:clamp(26px,3.4vw,36px);margin:0 0 8px;letter-spacing:-.5px}
+.sub{color:var(--mut);margin:0 0 28px;max-width:640px}
+
+.progs{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.prog{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);padding:24px;display:flex;flex-direction:column;position:relative;overflow:hidden}
+.prog:before{content:"";position:absolute;left:0;top:0;right:0;height:4px;background:var(--c)}
+.prog .ic{width:46px;height:46px;border-radius:12px;background:var(--c);display:grid;place-items:center;margin-bottom:14px;color:#171719}
+.prog .ic svg{width:24px;height:24px}
+.prog h3{margin:0 0 6px;font-size:21px}
+.prog p{color:var(--mut);margin:0 0 14px;font-size:15px}
+.prog ul{margin:0 0 18px;padding-left:18px;color:var(--tx);font-size:14.5px}
+.prog ul li{margin-bottom:3px}
+.prog .acoes{margin-top:auto;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.prog .ver{width:100%;margin-top:6px}
+
+.apk{display:flex;gap:18px;align-items:center;background:var(--bg2);border-radius:14px;padding:14px;margin:0 0 16px}
+.apk .qr{background:#fff;border-radius:10px;padding:6px;width:104px;height:104px;flex:none}
+.apk .qr svg{width:100%;height:100%;display:block}
+.apk small{color:var(--mut);font-size:13px;display:block}
+
+.passos{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;counter-reset:p}
+.passo{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);padding:22px}
+.passo:before{counter-increment:p;content:counter(p);display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--la);color:#171719;font-weight:800;margin-bottom:12px}
+.passo h3{margin:0 0 6px;font-size:18px}
+.passo p{margin:0;color:var(--mut);font-size:15px}
+
+.aviso{background:#2a2016;border:1px solid #4a3420;border-radius:var(--r);padding:20px 22px;display:flex;gap:16px}
+.aviso svg{width:26px;height:26px;color:var(--la);flex:none;margin-top:2px}
+.aviso h3{margin:0 0 4px;font-size:17px}
+.aviso p{margin:0;color:#cfc6bb;font-size:15px}
+
+footer{padding:36px 0 48px;color:var(--mut);font-size:13.5px;border-top:1px solid var(--bd);margin-top:30px}
+footer .wrap{display:flex;gap:12px;flex-wrap:wrap;justify-content:space-between}
+
+@media (max-width:900px){
+  .hero{grid-template-columns:1fr;padding-top:24px}
+  .progs,.passos{grid-template-columns:1fr}
+}
+@media (max-width:520px){
+  header nav{display:none}
+  .btn{width:100%;justify-content:center}
+  .prog .acoes .btn{width:auto;flex:1}
+  .apk{flex-direction:column;text-align:center}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="i-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10.5l5 5 5-5M5 20h14"/></symbol>
+  <symbol id="i-win" viewBox="0 0 24 24" fill="currentColor"><path d="M3 5.5 10.5 4.4v7.1H3zM11.5 4.3 21 3v8.5h-9.5zM3 12.5h7.5v7.1L3 18.5zM11.5 12.5H21V21l-9.5-1.3z"/></symbol>
+  <symbol id="i-and" viewBox="0 0 24 24" fill="currentColor"><path d="M7 9h10v8a1 1 0 0 1-1 1h-1v3h-2v-3h-2v3H9v-3H8a1 1 0 0 1-1-1zM5 9.5a1 1 0 0 1 2 0v5a1 1 0 0 1-2 0zM17 9.5a1 1 0 0 1 2 0v5a1 1 0 0 1-2 0zM7.2 8a4.8 4.8 0 0 1 9.6 0zM9.5 5.8a.6.6 0 1 0 0 1.2.6.6 0 0 0 0-1.2m5 0a.6.6 0 1 0 0 1.2.6.6 0 0 0 0-1.2"/></symbol>
+  <symbol id="i-gest" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 9h18M8 13h3M8 16h6"/></symbol>
+  <symbol id="i-cri" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="5" rx="2"/><rect x="13" y="10" width="8" height="11" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/></symbol>
+  <symbol id="i-sis" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4.5 16a8 8 0 1 1 15 0"/><path d="M12 15l4-5"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 20h20zM12 10v4M12 17v.5"/></symbol>
+</svg>
+
+<header>
+  <div class="wrap">
+    <img src="icone.png" alt="">
+    <b>Programas DLB</b>
+    <nav><a href="#programas">Programas</a><a href="#backup">Backup</a><a href="#celular">Celular</a></nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="hero">
+    <div>
+      <h1>Todos os programas DLB, <em>num lugar só.</em></h1>
+      <p>Baixe a Central DLB: ela instala o DLB, o DLB Criativo e o DLB Sistema, avisa quando sai versão nova e guarda o backup no Google Drive e no pendrive, sozinha.</p>
+      <a class="btn pri" id="bCentral" href="https://github.com/bonanidanilo52-lang/dlb-programas/releases/download/central/Central-DLB.exe">
+        <svg><use href="#i-win"/></svg> Baixar a Central DLB
+      </a>
+      <div class="nota">Windows 10 ou 11 · arquivo pequeno · grátis · <span class="ver" id="vCentral"></span></div>
+    </div>
+    <div class="mock" aria-hidden="true">
+      <div class="t"><img src="icone.png" alt=""><b>Central DLB</b></div>
+      <div class="row" style="--c:var(--la)"><span>DLB</span><i>em dia ✓</i></div>
+      <div class="row" style="--c:var(--az)"><span>DLB Criativo</span><i>em dia ✓</i></div>
+      <div class="row" style="--c:var(--cr)"><span>DLB Sistema</span><i>em dia ✓</i></div>
+      <div class="bk"><div><b>☁ Google Drive</b>backup de hoje</div><div><b>Pendrive</b>backup de hoje</div></div>
+    </div>
+  </div>
+
+  <section id="programas">
+    <h2>Os programas</h2>
+    <p class="sub">Pela Central é mais fácil, mas cada um também pode ser baixado direto aqui.</p>
+    <div class="progs">
+      <article class="prog" style="--c:var(--la)">
+        <div class="ic"><svg><use href="#i-gest"/></svg></div>
+        <h3>DLB</h3>
+        <p>Gestão do videomaker: tudo da empresa e da vida pessoal, no PC e no celular com os mesmos dados.</p>
+        <ul><li>Clientes, contratantes e trabalhos</li><li>Agenda e Google Agenda</li><li>Financeiro, orçamentos e relatórios em PDF</li><li>Contrato e cobrança pelo WhatsApp</li></ul>
+        <div class="acoes">
+          <a class="btn sec peq" href="https://github.com/bonanidanilo52-lang/studio-download/releases/latest/download/Studio-Instalador.exe"><svg><use href="#i-win"/></svg> Windows</a>
+          <a class="btn sec peq" href="#celular"><svg><use href="#i-and"/></svg> Android</a>
+          <div class="ver" id="vDlb"></div>
+        </div>
+      </article>
+      <article class="prog" style="--c:var(--az)">
+        <div class="ic"><svg><use href="#i-cri"/></svg></div>
+        <h3>DLB Criativo</h3>
+        <p>Quadro livre para ideias, roteiros e storyboard, com cenas, modelos e exportação em PDF.</p>
+        <ul><li>Notas, imagens, colunas e setas</li><li>Cartões de cena e sequência</li><li>Ligado aos clientes do DLB</li><li>Backup automático em Documentos</li></ul>
+        <div class="acoes">
+          <a class="btn sec peq" href="https://github.com/bonanidanilo52-lang/dlb-criativo-download/releases/latest/download/DLB-Criativo-Instalador.exe"><svg><use href="#i-win"/></svg> Windows</a>
+          <div class="ver" id="vCri"></div>
+        </div>
+      </article>
+      <article class="prog" style="--c:var(--cr)">
+        <div class="ic"><svg><use href="#i-sis"/></svg></div>
+        <h3>DLB Sistema</h3>
+        <p>Monitor leve do PC: temperatura, uso, FPS no jogo e modos para jogar e renderizar.</p>
+        <ul><li>FPS no jogo sem risco de anti-cheat</li><li>Modo Jogo e Modo Render</li><li>Limpeza, saúde do disco e internet</li><li>Avisos no celular</li></ul>
+        <div class="acoes">
+          <a class="btn sec peq" id="bSis" href="https://github.com/bonanidanilo52-lang/dlb-programas/releases/download/sistema/DLB-Sistema.zip"><svg><use href="#i-down"/></svg> Windows (.zip)</a>
+          <div class="ver" id="vSis">Recomendado instalar pela Central (ela também instala o .NET 8 se faltar).</div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section id="backup">
+    <h2>Backup para não perder nada</h2>
+    <p class="sub">A Central junta os dados dos três programas e o código deles e guarda cópias fora do PC. Se o computador estragar, é só instalar a Central num PC novo e restaurar.</p>
+    <div class="passos">
+      <div class="passo"><h3>Escolha onde guardar</h3><p>Google Drive (na nuvem, grátis) e/ou pendrive ou HD externo. Pode usar os dois.</p></div>
+      <div class="passo"><h3>Ela faz sozinha</h3><p>Ao ligar o PC e de hora em hora confere: se ainda não tem a cópia do dia, faz. O pendrive recebe assim que for ligado.</p></div>
+      <div class="passo"><h3>Volta com um clique</h3><p>Backup › Restaurar: escolha o dia e os dados voltam. Nada é apagado: o que existia fica guardado ao lado.</p></div>
+    </div>
+  </section>
+
+  <section id="celular">
+    <h2>No celular</h2>
+    <p class="sub">O DLB também roda no Android, com os mesmos dados do PC (sincronização em Ajustes).</p>
+    <div class="apk">
+      <div class="qr" id="qr"></div>
+      <div>
+        <b>Aponte a câmera do celular para o código</b>
+        <small>ou toque no botão abaixo pelo próprio celular. Na primeira vez o Android pede para permitir “instalar apps desconhecidos”.</small>
+        <p style="margin:12px 0 0"><a class="btn pri peq" href="https://github.com/bonanidanilo52-lang/studio-download/releases/latest/download/Studio.apk"><svg><use href="#i-and"/></svg> Baixar o app (APK)</a></p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="aviso">
+      <svg><use href="#i-alert"/></svg>
+      <div>
+        <h3>O Windows mostrou “O Windows protegeu o computador”?</h3>
+        <p>É normal em programas novos que ainda não são conhecidos pela Microsoft. Clique em <b>Mais informações</b> e depois em <b>Executar assim mesmo</b>. Só acontece na primeira vez.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Programas DLB · feitos por Danilo Bonani, Cerquilho/SP</span>
+    <span><a href="https://danilobonani.netlify.app">danilobonani.netlify.app</a></span>
+  </div>
+</footer>
+
+<script src="qr.js"></script>
+<script>
+(function(){
+  var D = "bonanidanilo52-lang";
+  // QR do APK
+  try {
+    var q = qrcode(0, "M");
+    q.addData("https://github.com/" + D + "/studio-download/releases/latest/download/Studio.apk");
+    q.make();
+    document.getElementById("qr").innerHTML = q.createSvgTag({cellSize: 4, margin: 0, scalable: true});
+  } catch (e) {}
+
+  // "202611131318", "v202611131318" ou "1.20261113.1318" -> "13/11/2026"
+  function data(v){
+    if (!v) return "";
+    v = String(v).replace(/^v/, "");
+    var m = v.match(/^\d+\.(\d{8})\.\d+$/); if (m) v = m[1];
+    if (!/^\d{8}/.test(v)) return "";
+    return v.slice(6,8) + "/" + v.slice(4,6) + "/" + v.slice(0,4);
+  }
+  function mostra(id, v){ var d = data(v); if (d) document.getElementById(id).innerHTML = "Versão de <b>" + d + "</b>"; }
+  function json(u){ return fetch(u, {cache:"no-store"}).then(function(r){ if(!r.ok) throw 0; return r.json(); }); }
+
+  json("versoes.json").then(function(v){
+    if (v.central && v.central.ver) mostra("vCentral", v.central.ver);
+    if (v.sistema && v.sistema.ver) {
+      var el = document.getElementById("vSis");
+      el.innerHTML = "Versão de <b>" + data(v.sistema.ver) + "</b> · recomendado instalar pela Central (ela também instala o .NET 8 se faltar).";
+    }
+  }).catch(function(){});
+  json("https://raw.githubusercontent.com/" + D + "/studio-download/main/version.json").then(function(v){ mostra("vDlb", v.pc); }).catch(function(){});
+  json("https://api.github.com/repos/" + D + "/dlb-criativo-download/releases/latest").then(function(v){ mostra("vCri", v.tag_name); }).catch(function(){});
+})();
+</script>
+</body>
+</html>

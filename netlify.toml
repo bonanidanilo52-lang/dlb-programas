@@ -1,0 +1,8 @@
+[build]
+  publish = "site"
+
+[[headers]]
+  for = "/versoes.json"
+  [headers.values]
+    Cache-Control = "no-cache"
+    Access-Control-Allow-Origin = "*"
