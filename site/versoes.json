@@ -1,4 +1,10 @@
 {
-  "central": { "ver": "", "url": "https://github.com/bonanidanilo52-lang/dlb-programas/releases/download/central/Central-DLB.exe" },
-  "sistema": { "ver": "", "url": "https://github.com/bonanidanilo52-lang/dlb-programas/releases/download/sistema/DLB-Sistema.zip" }
+    "central":  {
+                    "ver":  "",
+                    "url":  "https://github.com/bonanidanilo52-lang/dlb-programas/releases/download/central/Central-DLB.exe"
+                },
+    "sistema":  {
+                    "ver":  "1.20261113.1525",
+                    "url":  "https://github.com/bonanidanilo52-lang/dlb-programas/releases/download/sistema/DLB-Sistema.zip"
+                }
 }
