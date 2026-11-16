@@ -16,7 +16,8 @@ Criado em 13/11/2026.
   - Versão: o Windows não aceita 20261113 numa parte da versão do .exe, então a data vai em InformationalVersion (`-p:VersaoDLB=1.AAAAMMDD.hhmm`); `Versao.Atual` lê de lá.
 - `site/` — site estático (index.html, icone.png, qr.js = qrcode-generator MIT, versoes.json). Netlify publica a pasta `site` (netlify.toml). Mostra as versões ao vivo (versoes.json, version.json do studio-download e API do GitHub do dlb-criativo-download).
 - DLB Legendas (Programas.cs, 16/11/2026): plugin CEP do Premiere. Instalar = baixa `DLB-Legendas.zip` (pasta com.dlb.legendas) e extrai em `%APPDATA%\Adobe\CEP\extensions\com.dlb.legendas` (+ versao.txt), liga PlayerDebugMode (HKCU\Software\Adobe\CSXS.9–13) e baixa só o que faltar da transcrição em `Documentos\DLB Legendas\whisper`: `DLB-Legendas-Transcricao.zip` (whisper-cli/whisper-server Vulkan, de bonanidanilo52-lang/dlb-whisper) → bin\, e o modelo ggml-large-v3-turbo-q5_0 + ggml-silero-v5.1.2 direto do Hugging Face. Pede para fechar o Premiere. "Abrir" abre o Premiere (App Paths ou pasta Adobe Premiere Pro*). versoes.json: chaves `legendas` e `legendas_whisper`. Backup: Documentos\DLB Legendas\dados.json + código dlb-legendas e dlb-whisper (flag CodigoLegendasFeito).
-- `tools/` — `gerar-icone.ps1`, `publicar-central.ps1`, `publicar-sistema.ps1`, `publicar-legendas.ps1`.
+- DLB Baixador (Programas.cs, 16/11/2026): plugin CEP do Premiere que baixa vídeo/áudio por link (código em ..\dlb-baixador). Instalar = baixa `DLB-Baixador.zip` (pasta com.dlb.baixador) e extrai em `%APPDATA%\Adobe\CEP\extensions\com.dlb.baixador` (+ versao.txt) pelo mesmo `InstalarPainelCep` do Legendas (liga PlayerDebugMode). yt-dlp/Deno/ffmpeg NÃO vão no pacote: o painel baixa na 1ª vez para Documentos\DLB Baixadorin. versoes.json: chave `baixador`. Backup: código dlb-baixador (flag CodigoBaixadorFeito).
+- `tools/` — `gerar-icone.ps1`, `publicar-central.ps1`, `publicar-sistema.ps1`, `publicar-legendas.ps1`, `publicar-baixador.ps1` (com `BX_SO_EMPACOTAR=1` só monta o .zip, sem publicar).
 
 ## Endereços
 - Repositório público: bonanidanilo52-lang/dlb-programas. Releases com tag fixa: `central` (Central-DLB.exe) e `sistema` (DLB-Sistema.zip), substituídas com `--clobber`.
@@ -26,6 +27,7 @@ Criado em 13/11/2026.
 ## Publicar
 - Central: `powershell -ExecutionPolicy Bypass -File tools\publicar-central.ps1`
 - DLB Sistema: `powershell -ExecutionPolicy Bypass -File tools\publicar-sistema.ps1`
+- DLB Baixador: `powershell -ExecutionPolicy Bypass -File tools\publicar-baixador.ps1` (depois publicar a Central também)
 - DLB Legendas: `powershell -ExecutionPolicy Bypass -File tools\publicar-legendas.ps1` (depois publicar a Central também, para ela mostrar o DLB Legendas) (compila ..\dlb-sistema\src numa pasta temporária, então pode rodar com o DLB Sistema aberto)
 - Os dois fazem commit + push (o push no main atualiza o site). Sempre pedir autorização ao Danilo antes de publicar.
 - DLB e DLB Criativo continuam sendo publicados pelos próprios repositórios (studio-download, dlb-criativo-download).

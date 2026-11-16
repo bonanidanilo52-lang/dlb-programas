@@ -30,6 +30,7 @@ namespace CentralDlb
         public string UltimoErro { get; set; }
         public bool CodigoPadraoFeito { get; set; }
         public bool CodigoLegendasFeito { get; set; }
+        public bool CodigoBaixadorFeito { get; set; }
 
         static string Arq => Path.Combine(Locais.Dados, "config.json");
 
@@ -59,6 +60,13 @@ namespace CentralDlb
                     if (Directory.Exists(p) && !c.Codigo.Contains(p, StringComparer.OrdinalIgnoreCase)) c.Codigo.Add(p);
                 }
                 c.CodigoLegendasFeito = true;
+            }
+            if (!c.CodigoBaixadorFeito)
+            {
+                // DLB Baixador (plugin do Premiere) entrou depois: acrescenta o código dele uma vez
+                var p = Path.Combine(Locais.Downloads, "dlb-baixador");
+                if (Directory.Exists(p) && !c.Codigo.Contains(p, StringComparer.OrdinalIgnoreCase)) c.Codigo.Add(p);
+                c.CodigoBaixadorFeito = true;
             }
             return c;
         }

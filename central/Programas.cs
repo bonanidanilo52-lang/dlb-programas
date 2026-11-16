@@ -129,7 +129,67 @@ namespace CentralDlb
             };
             leg.Instalar = (av) => InstalarLegendas(leg, av);
 
-            return new List<Programa> { dlb, cri, sis, leg };
+            var bx = new Programa
+            {
+                Id = "baixador", Nome = "DLB Baixador", Processo = "Adobe Premiere Pro",
+                Descricao = "Plugin do Premiere: baixa vídeo ou só o áudio por link (YouTube, Instagram, Vimeo…) e já importa no projeto.",
+                Cor = Tema.Azul,
+            };
+            bx.Checar = () =>
+            {
+                var man = Path.Combine(BaixadorPasta, "CSXS", "manifest.xml");
+                if (File.Exists(man))
+                {
+                    bx.ExeInstalado = AcharPremiere() ?? BaixadorPasta; // "Abrir" abre o Premiere
+                    var vt = Path.Combine(BaixadorPasta, "versao.txt");
+                    bx.VersaoInstalada = File.Exists(vt) ? File.ReadAllText(vt).Trim() : null;
+                }
+                else { bx.ExeInstalado = null; bx.VersaoInstalada = null; }
+                var (ver, url) = Item("baixador");
+                bx.VersaoNova = ver; bx.UrlInstalador = url;
+                return Task.CompletedTask;
+            };
+            bx.Instalar = (av) => InstalarBaixador(bx, av);
+
+            return new List<Programa> { dlb, cri, sis, leg, bx };
+        }
+
+        // ---------- DLB Baixador (plugin do Premiere) ----------
+        // Só o painel: o yt-dlp, o Deno e o ffmpeg o próprio painel baixa na 1ª vez ("Preparar agora").
+        public static string BaixadorPasta => Path.Combine(Locais.Roaming, "Adobe", "CEP", "extensions", "com.dlb.baixador");
+
+        static async Task InstalarBaixador(Programa p, Action<string, int> av)
+        {
+            if (p.UrlInstalador == null) throw new Exception("Sem internet ou o DLB Baixador ainda não foi publicado no site.");
+            if (Sistema.Aberto(p.Processo))
+                throw new Exception("Feche o Premiere primeiro e tente de novo.");
+            var zip = Path.Combine(Locais.Temp, "DLB-Baixador.zip");
+            av("Baixando DLB Baixador…", 0);
+            await Rede.Baixar(p.UrlInstalador, zip, pc => av($"Baixando DLB Baixador… {pc}%", pc));
+            av("Instalando o plugin no Premiere…", -1);
+            await Task.Run(() => InstalarPainelCep(zip, BaixadorPasta, p.VersaoNova, "DLB Baixador"));
+            Log.Info($"DLB Baixador instalado ({p.VersaoNova}).");
+        }
+
+        /// <summary>Extrai um painel CEP (.zip com CSXS\manifest.xml) na pasta de extensões e liga o PlayerDebugMode.</summary>
+        static void InstalarPainelCep(string zip, string pasta, string versao, string nome)
+        {
+            var novo = pasta + ".novo";
+            if (Directory.Exists(novo)) Directory.Delete(novo, true);
+            ZipFile.ExtractToDirectory(zip, novo);
+            var man = Directory.GetFiles(novo, "manifest.xml", SearchOption.AllDirectories).FirstOrDefault()
+                      ?? throw new Exception($"O pacote do {nome} veio sem o manifest.xml.");
+            var raiz = Path.GetDirectoryName(Path.GetDirectoryName(man)); // ...\CSXS\manifest.xml → pasta do plugin
+            Directory.CreateDirectory(Path.GetDirectoryName(pasta));
+            if (Directory.Exists(pasta)) Directory.Delete(pasta, true);
+            Directory.Move(raiz, pasta);
+            if (Directory.Exists(novo)) Directory.Delete(novo, true);
+            File.WriteAllText(Path.Combine(pasta, "versao.txt"), versao ?? "");
+            try { File.Delete(zip); } catch { }
+            // deixa o Premiere abrir painéis que não vieram da loja da Adobe (só para este usuário)
+            for (int n = 9; n <= 13; n++)
+                using (var k = Microsoft.Win32.Registry.CurrentUser.CreateSubKey($@"Software\Adobe\CSXS.{n}"))
+                    k?.SetValue("PlayerDebugMode", "1");
         }
 
         // ---------- DLB Legendas (plugin do Premiere + transcrição) ----------
@@ -170,25 +230,7 @@ namespace CentralDlb
             av("Baixando DLB Legendas…", 0);
             await Rede.Baixar(p.UrlInstalador, zip, pc => av($"Baixando DLB Legendas… {pc}%", pc));
             av("Instalando o plugin no Premiere…", -1);
-            await Task.Run(() =>
-            {
-                var novo = LegendasPasta + ".novo";
-                if (Directory.Exists(novo)) Directory.Delete(novo, true);
-                ZipFile.ExtractToDirectory(zip, novo);
-                var man = Directory.GetFiles(novo, "manifest.xml", SearchOption.AllDirectories).FirstOrDefault()
-                          ?? throw new Exception("O pacote do DLB Legendas veio sem o manifest.xml.");
-                var raiz = Path.GetDirectoryName(Path.GetDirectoryName(man)); // ...\CSXS\manifest.xml → pasta do plugin
-                Directory.CreateDirectory(Path.GetDirectoryName(LegendasPasta));
-                if (Directory.Exists(LegendasPasta)) Directory.Delete(LegendasPasta, true);
-                Directory.Move(raiz, LegendasPasta);
-                if (Directory.Exists(novo)) Directory.Delete(novo, true);
-                File.WriteAllText(Path.Combine(LegendasPasta, "versao.txt"), p.VersaoNova ?? "");
-                try { File.Delete(zip); } catch { }
-                // deixa o Premiere abrir painéis que não vieram da loja da Adobe (só para este usuário)
-                for (int n = 9; n <= 13; n++)
-                    using (var k = Microsoft.Win32.Registry.CurrentUser.CreateSubKey($@"Software\Adobe\CSXS.{n}"))
-                        k?.SetValue("PlayerDebugMode", "1");
-            });
+            await Task.Run(() => InstalarPainelCep(zip, LegendasPasta, p.VersaoNova, "DLB Legendas"));
 
             // 2) a transcrição (Whisper na placa de vídeo) — só baixa o que faltar
             Directory.CreateDirectory(Path.Combine(WhisperPasta, "bin"));
