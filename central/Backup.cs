@@ -29,6 +29,7 @@ namespace CentralDlb
         public string UltimoBackup { get; set; }
         public string UltimoErro { get; set; }
         public bool CodigoPadraoFeito { get; set; }
+        public bool CodigoLegendasFeito { get; set; }
 
         static string Arq => Path.Combine(Locais.Dados, "config.json");
 
@@ -48,6 +49,16 @@ namespace CentralDlb
                     if (Directory.Exists(p) && !c.Codigo.Contains(p, StringComparer.OrdinalIgnoreCase)) c.Codigo.Add(p);
                 }
                 c.CodigoPadraoFeito = true;
+            }
+            if (!c.CodigoLegendasFeito)
+            {
+                // DLB Legendas (plugin do Premiere) entrou depois: acrescenta o código dele uma vez
+                foreach (var n in new[] { "dlb-legendas", "dlb-whisper" })
+                {
+                    var p = Path.Combine(Locais.Downloads, n);
+                    if (Directory.Exists(p) && !c.Codigo.Contains(p, StringComparer.OrdinalIgnoreCase)) c.Codigo.Add(p);
+                }
+                c.CodigoLegendasFeito = true;
             }
             return c;
         }
@@ -85,6 +96,7 @@ namespace CentralDlb
                 new FonteDados { Prefixo = "DLB Criativo/backup-automatico", Origem = Path.Combine(doc, "DLB-Criativo-Backup"), Descricao = "DLB Criativo — backups automáticos (quadros e imagens)" },
                 new FonteDados { Prefixo = "DLB Criativo/dados-do-programa", Origem = Path.Combine(ap, "dlb-criativo"), SoSubpastas = new[] { "Local Storage", "IndexedDB" }, Descricao = "DLB Criativo — dados guardados dentro do programa" },
                 new FonteDados { Prefixo = "DLB Sistema", Origem = Path.Combine(ap, "DLB Sistema"), Descricao = "DLB Sistema — ajustes, uso do PC e partidas" },
+                new FonteDados { Prefixo = "DLB Legendas/dados.json", Origem = Path.Combine(doc, "DLB Legendas", "dados.json"), Arquivo = true, Descricao = "DLB Legendas — seus modelos, correções aprendidas e ajustes" },
                 new FonteDados { Prefixo = "Plano Instagram/plano-instagram-dlb.json", Origem = Path.Combine(doc, "plano-instagram-dlb.json"), Arquivo = true, Descricao = "Plano do Instagram" },
             };
         }

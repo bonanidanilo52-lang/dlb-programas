@@ -107,7 +107,116 @@ namespace CentralDlb
             };
             sis.Instalar = (av) => InstalarSistema(sis, av);
 
-            return new List<Programa> { dlb, cri, sis };
+            var leg = new Programa
+            {
+                Id = "legendas", Nome = "DLB Legendas", Processo = "Adobe Premiere Pro",
+                Descricao = "Plugin do Premiere: textos e legendas animadas, com legenda automática que ouve o vídeo.",
+                Cor = Tema.Laranja,
+            };
+            leg.Checar = () =>
+            {
+                var man = Path.Combine(LegendasPasta, "CSXS", "manifest.xml");
+                if (File.Exists(man))
+                {
+                    leg.ExeInstalado = AcharPremiere() ?? LegendasPasta; // "Abrir" abre o Premiere
+                    var vt = Path.Combine(LegendasPasta, "versao.txt");
+                    leg.VersaoInstalada = File.Exists(vt) ? File.ReadAllText(vt).Trim() : null;
+                }
+                else { leg.ExeInstalado = null; leg.VersaoInstalada = null; }
+                var (ver, url) = Item("legendas");
+                leg.VersaoNova = ver; leg.UrlInstalador = url;
+                return Task.CompletedTask;
+            };
+            leg.Instalar = (av) => InstalarLegendas(leg, av);
+
+            return new List<Programa> { dlb, cri, sis, leg };
+        }
+
+        // ---------- DLB Legendas (plugin do Premiere + transcrição) ----------
+        public static string LegendasPasta => Path.Combine(Locais.Roaming, "Adobe", "CEP", "extensions", "com.dlb.legendas");
+        public static string WhisperPasta => Path.Combine(Locais.Documentos, "DLB Legendas", "whisper");
+
+        static string AcharPremiere()
+        {
+            try
+            {
+                using (var k = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\Adobe Premiere Pro.exe"))
+                { var v = k?.GetValue("") as string; if (!string.IsNullOrEmpty(v) && File.Exists(v.Trim('"'))) return v.Trim('"'); }
+            }
+            catch { }
+            var bases = new List<string> { Path.Combine(Environment.GetEnvironmentVariable("ProgramFiles") ?? @"C:\Program Files", "Adobe") };
+            foreach (var d in DriveInfo.GetDrives())
+                try { if (d.DriveType == DriveType.Fixed && d.IsReady) { bases.Add(Path.Combine(d.RootDirectory.FullName, "premiere")); bases.Add(Path.Combine(d.RootDirectory.FullName, "Adobe")); } } catch { }
+            foreach (var b in bases)
+                try
+                {
+                    if (!Directory.Exists(b)) continue;
+                    var achou = Directory.GetDirectories(b, "Adobe Premiere Pro*").OrderByDescending(x => x)
+                        .Select(x => Path.Combine(x, "Adobe Premiere Pro.exe")).FirstOrDefault(File.Exists);
+                    if (achou != null) return achou;
+                }
+                catch { }
+            return null;
+        }
+
+        static async Task InstalarLegendas(Programa p, Action<string, int> av)
+        {
+            if (p.UrlInstalador == null) throw new Exception("Sem internet ou o DLB Legendas ainda não foi publicado no site.");
+            if (Sistema.Aberto(p.Processo))
+                throw new Exception("Feche o Premiere primeiro e tente de novo.");
+
+            // 1) o plugin
+            var zip = Path.Combine(Locais.Temp, "DLB-Legendas.zip");
+            av("Baixando DLB Legendas…", 0);
+            await Rede.Baixar(p.UrlInstalador, zip, pc => av($"Baixando DLB Legendas… {pc}%", pc));
+            av("Instalando o plugin no Premiere…", -1);
+            await Task.Run(() =>
+            {
+                var novo = LegendasPasta + ".novo";
+                if (Directory.Exists(novo)) Directory.Delete(novo, true);
+                ZipFile.ExtractToDirectory(zip, novo);
+                var man = Directory.GetFiles(novo, "manifest.xml", SearchOption.AllDirectories).FirstOrDefault()
+                          ?? throw new Exception("O pacote do DLB Legendas veio sem o manifest.xml.");
+                var raiz = Path.GetDirectoryName(Path.GetDirectoryName(man)); // ...\CSXS\manifest.xml → pasta do plugin
+                Directory.CreateDirectory(Path.GetDirectoryName(LegendasPasta));
+                if (Directory.Exists(LegendasPasta)) Directory.Delete(LegendasPasta, true);
+                Directory.Move(raiz, LegendasPasta);
+                if (Directory.Exists(novo)) Directory.Delete(novo, true);
+                File.WriteAllText(Path.Combine(LegendasPasta, "versao.txt"), p.VersaoNova ?? "");
+                try { File.Delete(zip); } catch { }
+                // deixa o Premiere abrir painéis que não vieram da loja da Adobe (só para este usuário)
+                for (int n = 9; n <= 13; n++)
+                    using (var k = Microsoft.Win32.Registry.CurrentUser.CreateSubKey($@"Software\Adobe\CSXS.{n}"))
+                        k?.SetValue("PlayerDebugMode", "1");
+            });
+
+            // 2) a transcrição (Whisper na placa de vídeo) — só baixa o que faltar
+            Directory.CreateDirectory(Path.Combine(WhisperPasta, "bin"));
+            var (_, urlW) = Item("legendas_whisper");
+            if (urlW != null && !File.Exists(Path.Combine(WhisperPasta, "bin", "whisper-server.exe")))
+            {
+                var wz = Path.Combine(Locais.Temp, "DLB-Legendas-Transcricao.zip");
+                av("Baixando a transcrição automática…", 0);
+                await Rede.Baixar(urlW, wz, pc => av($"Baixando a transcrição automática… {pc}%", pc));
+                await Task.Run(() =>
+                {
+                    using (var z = ZipFile.OpenRead(wz))
+                        foreach (var e in z.Entries)
+                            if (e.Name != "") e.ExtractToFile(Path.Combine(WhisperPasta, "bin", e.Name), true);
+                    try { File.Delete(wz); } catch { }
+                });
+            }
+            var modelos = new[] {
+                ("ggml-large-v3-turbo-q5_0.bin", "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-large-v3-turbo-q5_0.bin", "o \"cérebro\" da transcrição (~550 MB)"),
+                ("ggml-silero-v5.1.2.bin", "https://huggingface.co/ggml-org/whisper-vad/resolve/main/ggml-silero-v5.1.2.bin", "o filtro de silêncio") };
+            foreach (var (arq, url, nome) in modelos)
+            {
+                var dest = Path.Combine(WhisperPasta, arq);
+                if (File.Exists(dest)) continue;
+                av($"Baixando {nome}…", 0);
+                await Rede.Baixar(url, dest, pc => av($"Baixando {nome}… {pc}%", pc));
+            }
+            Log.Info($"DLB Legendas instalado ({p.VersaoNova}).");
         }
 
         public static string SistemaPasta => Path.Combine(Locais.Local, "Programs", "DLB Sistema");

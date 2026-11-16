@@ -229,14 +229,15 @@ namespace CentralDlb
             if (p.PastaAntiga) info.Add("Rodando da pasta Downloads (cópia de teste). Instale para receber atualizações.");
             if (p.VersaoNova != null) info.Add("Mais nova: " + Versao.Bonita(p.VersaoNova));
             else if (p.ErroVerificar != null) info.Add(p.ErroVerificar);
-            else if (p.Id == "sistema") info.Add("Ainda não publicado no site.");
+            else if (p.Id == "sistema" || p.Id == "legendas") info.Add("Ainda não publicado no site.");
+            if (p.Id == "legendas" && p.Instalado) info.Add("No Premiere: Janela › Extensões › DLB Legendas");
             if (info.Count > 0) k.Corpo.Controls.Add(Quebra(string.Join("   ·   ", info), 9, Tema.Apagado));
 
             var l = Linha(); l.Margin = new Padding(0, Tema.D(8), 0, 0);
             if (!p.Instalado || p.TemAtualizacao)
             {
                 var b = Tema.Botao(p.Instalado ? "⬆  Atualizar" : "⬇  Instalar", true);
-                b.Enabled = p.UrlInstalador != null && (p.VersaoNova != null || p.Id != "sistema");
+                b.Enabled = p.UrlInstalador != null && (p.VersaoNova != null || (p.Id != "sistema" && p.Id != "legendas"));
                 b.Click += async (s, e) => await InstalarUm(p);
                 l.Controls.Add(b);
             }
