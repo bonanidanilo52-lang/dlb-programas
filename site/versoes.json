@@ -6,5 +6,13 @@
     "sistema":  {
                     "ver":  "1.20261113.1525",
                     "url":  "https://github.com/bonanidanilo52-lang/dlb-programas/releases/download/sistema/DLB-Sistema.zip"
-                }
+                },
+    "legendas":  {
+                     "ver":  "1.20261116.1833",
+                     "url":  "https://github.com/bonanidanilo52-lang/dlb-programas/releases/download/legendas/DLB-Legendas.zip"
+                 },
+    "legendas_whisper":  {
+                             "ver":  "1.20261116.1833",
+                             "url":  "https://github.com/bonanidanilo52-lang/dlb-programas/releases/download/legendas/DLB-Legendas-Transcricao.zip"
+                         }
 }
